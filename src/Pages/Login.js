@@ -3,7 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://backend-moaqa-production.up.railway.app'
+  : '';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +22,7 @@ const Login = () => {
     // Check if we're on a subdomain login page
     const fetchPortalInfo = async () => {
       try {
-        const response = await axios.get(`${API_URL}/portal-info`);
+        const response = await axios.get(`/portal-info`);
         if (response.data && response.data.portal) {
           setPortalInfo(response.data.portal);
           document.title = `${response.data.portal.companyName} - Login`;
@@ -44,7 +46,7 @@ const Login = () => {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API_URL}/login`, formData);
+      const response = await axios.post(`/api/auth/login`, formData);
       
       // Store token in localStorage
       localStorage.setItem('token', response.data.token);

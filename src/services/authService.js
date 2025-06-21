@@ -1,25 +1,16 @@
-import axios from 'axios';
-
-// Get API URL from environment or fallback to default
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+import apiClient from './apiClient';
 
 // Function to set the auth token in localStorage
 export const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem('token', token);
     localStorage.setItem('sessionPersist', 'true'); // Add session persistence flag
-    
-    // Also set token in axios default headers for all future requests
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    
-    // Return true to indicate success
     return true;
   }
   
   // If token is null/undefined, clear token
   localStorage.removeItem('token');
   localStorage.removeItem('sessionPersist'); // Clear session persistence flag
-  delete axios.defaults.headers.common['Authorization'];
   return false;
 };
 
@@ -88,8 +79,8 @@ export const getUserInfo = () => {
 // Login user
 export const login = async (email, password) => {
   try {
-    console.log('Attempting login with:', { email, url: `${API_URL}/login` });
-    const response = await axios.post(`${API_URL}/login`, { email, password });
+    console.log('Attempting login with:', { email, url: `/auth/login` });
+    const response = await apiClient.post(`/auth/login`, { email, password });
     setAuthToken(response.data.token);
     return {
       success: true,
@@ -108,7 +99,7 @@ export const login = async (email, password) => {
 export const loginSuperAdmin = async (email, password) => {
   try {
     console.log('Attempting superadmin login with:', email);
-    const response = await axios.post(`${API_URL}/superadmin/login`, { 
+    const response = await apiClient.post(`/superadmin/login`, { 
       email, 
       password 
     });
@@ -135,10 +126,5 @@ export const logout = () => {
 // Initialize authentication - call this at app startup
 export const initAuth = () => {
   const token = localStorage.getItem('token');
-  if (token) {
-    // Set token in axios headers
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    return true;
-  }
-  return false;
+  return !!token;
 }; 

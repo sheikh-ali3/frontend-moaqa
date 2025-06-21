@@ -25,8 +25,7 @@ const ProductAccess = () => {
         setLoading(true);
         setError(null);
         
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-        const response = await axios.get(`${apiUrl}/products/access/${accessLink}`);
+        const response = await axios.get(`/products/access/${accessLink}`);
         
         if (response.data.success) {
           setProduct(response.data.product);
@@ -57,9 +56,8 @@ const ProductAccess = () => {
     try {
       setVerifyingAccess(true);
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.get(
-        `${apiUrl}/products/verify/${productId}`,
+        `/products/verify/${productId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -90,8 +88,7 @@ const ProductAccess = () => {
     }
     
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await axios.post(`${apiUrl}/login`, { email, password });
+      const response = await axios.post(`/login`, { email, password });
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);

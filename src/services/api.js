@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Get API URL from environment or use default
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://backend-moaqa-production.up.railway.app'
+  : '';
 
 // Create axios instance with auth header
 const authAxios = () => {
@@ -14,11 +16,11 @@ const authAxios = () => {
 
 // Authentication services
 export const login = async (email, password) => {
-  return axios.post(`${API_URL}/api/auth/login`, { email, password });
+  return axios.post(`/api/auth/login`, { email, password });
 };
 
 export const superAdminLogin = async (email, password) => {
-  return axios.post(`${API_URL}/superadmin/login`, { email, password });
+  return axios.post(`/superadmin/login`, { email, password });
 };
 
 export const logout = () => {
@@ -97,7 +99,7 @@ export const deleteUser = async (userId) => {
 
 // Access product by link
 export const accessProductByLink = async (accessLink) => {
-  return axios.get(`/products/access/${accessLink}`);
+  return axios.get(`${API_URL}/products/access/${accessLink}`);
 };
 
 // Service management services

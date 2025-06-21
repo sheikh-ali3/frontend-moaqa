@@ -24,7 +24,9 @@ class WebSocketService {
 
     try {
       // Use the API URL for WebSocket connection
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.NODE_ENV === 'production'
+        ? 'https://backend-moaqa-production.up.railway.app'
+        : window.location.origin;
       const wsUrl = apiUrl.replace(/^http/, 'ws') + '/api/ws?token=' + token;
       
       console.log('Attempting WebSocket connection to:', wsUrl);
