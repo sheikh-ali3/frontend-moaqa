@@ -17,6 +17,7 @@ const LoginPage = () => {
 
     try {
       const result = await login(email, password);
+      console.log('Login result:', result.data);
 
       if (result.success) {
         // Login successful - navigate based on role
