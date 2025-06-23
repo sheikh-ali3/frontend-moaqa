@@ -202,7 +202,7 @@ const SuperAdminDashboard = () => {
       return false;
     }
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       await axios.get(`${apiUrl}/superadmin`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -223,7 +223,7 @@ const SuperAdminDashboard = () => {
         throw new Error('No token found');
       }
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       const response = await axios.get(`${apiUrl}/superadmin/admins`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -249,7 +249,7 @@ const SuperAdminDashboard = () => {
         throw new Error('No token found');
       }
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       const response = await axios.get(`${apiUrl}/superadmin/crm/overview`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -274,7 +274,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       console.log('Fetching products from:', `${apiUrl}/superadmin/products`);
       
       try {
@@ -341,7 +341,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       console.log('Fetching services from:', `${apiUrl}/services/superadmin`);
       
       const response = await axios.get(
@@ -376,7 +376,7 @@ const SuperAdminDashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       console.log('Creating default products at:', `${apiUrl}/superadmin/products`);
       
       const defaultProducts = [
@@ -508,7 +508,7 @@ const SuperAdminDashboard = () => {
         return;
       }
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       
       try {
         const response = await axios.get(`${apiUrl}/api/notifications`, {
@@ -624,7 +624,7 @@ const SuperAdminDashboard = () => {
       };
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/superadmin/create-admin`,
+        `${'https://backend-moaqa-production.up.railway.app'}/superadmin/create-admin`,
         enterpriseData,
         {
           headers: {
@@ -683,7 +683,7 @@ const SuperAdminDashboard = () => {
       const productName = productNames[productId] || productId;
       
       const actionText = grantAccess ? 'granted' : 'revoked';
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       const endpoint = `/superadmin/admins/${adminId}/products/${productId}/${grantAccess ? 'grant' : 'revoke'}`;
       
       const response = await axios.put(
@@ -996,7 +996,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
       await axios.delete(`${apiUrl}/superadmin/admins/${adminId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
