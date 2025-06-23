@@ -20,15 +20,15 @@ const LoginPage = () => {
       console.log('Login result:', result.data);
 
       if (result.success) {
-        // Login successful - navigate based on role
-        const { role } = result.data;
+        // Try to get role from top-level or from user object
+        const role = result.data.role || (result.data.user && result.data.user.role);
         
         if (role === 'admin') {
-        navigate('/admin');
+          navigate('/admin');
         } else if (role === 'user') {
-        navigate('/user');
-      } else {
-        setError('Unknown user role');
+          navigate('/user');
+        } else {
+          setError('Unknown user role');
         }
       } else {
         // Login failed
