@@ -79,8 +79,8 @@ export const getUserInfo = () => {
 // Login user
 export const login = async (email, password) => {
   try {
-    console.log('Attempting login with:', { email, url: `/auth/login` });
-    const response = await apiClient.post(`/auth/login`, { email, password });
+    console.log('Attempting login with:', { email, url: '/api/auth/login' });
+    const response = await apiClient.post('/api/auth/login', { email, password });
     setAuthToken(response.data.token);
     return {
       success: true,
