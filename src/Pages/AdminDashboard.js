@@ -1,5 +1,5 @@
 // src/Pages/AdminDashboard.js
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
@@ -73,7 +73,6 @@ const AdminDashboard = ({ activeTab: initialActiveTab }) => {
     password: ''
   });
   const [profileDropdownVisible, setProfileDropdownVisible] = useState(false);
-  const profileDropdownRef = useRef(null);
   const [userPermissions, setUserPermissions] = useState({
     crmAccess: false,
     hrmsAccess: false,

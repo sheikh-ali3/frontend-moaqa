@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './TicketForm.css';
 
 const TicketForm = ({ ticketForm, handleTicketFormChange, handleSubmitTicket, onClose, onSuccess }) => {
-  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   // Reset form when component mounts or when ticketForm changes
   useEffect(() => {
     if (ticketForm && Object.values(ticketForm).every(value => value === '' || value === 'Low')) {
-      setAttachments([]);
       setError('');
     }
   }, [ticketForm]);
@@ -20,7 +17,6 @@ const TicketForm = ({ ticketForm, handleTicketFormChange, handleSubmitTicket, on
       setError('Maximum 5 files allowed');
       return;
     }
-    setAttachments(Array.from(e.target.files));
     setError('');
   };
 
@@ -46,8 +42,6 @@ const TicketForm = ({ ticketForm, handleTicketFormChange, handleSubmitTicket, on
         onSuccess();
       }
       
-      // Reset attachments
-      setAttachments([]);
       setError('');
       
     } catch (error) {
