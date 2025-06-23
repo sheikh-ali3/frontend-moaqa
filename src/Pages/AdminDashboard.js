@@ -1,5 +1,5 @@
 // src/Pages/AdminDashboard.js
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
@@ -3066,6 +3066,8 @@ const AdminDashboard = ({ activeTab: initialActiveTab }) => {
       }
     }
   };
+
+  const profileDropdownRef = useRef(null);
 
   return (
     <div className="admin-dashboard">
