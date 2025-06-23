@@ -15,7 +15,7 @@ const AdminServicesPage = () => {
   const [alert, setAlert] = useState({ show: false, message: '', type: 'success' });
   const [activeTab, setActiveTab] = useState('services');
   const [adminProfile, setAdminProfile] = useState(null);
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
   
   // Refs for data caching and tracking loading attempts
   const cachedData = useRef({ services: null, quotations: null });
@@ -487,7 +487,7 @@ const AdminServicesPage = () => {
         phone: quotationForm.enterpriseDetails.phone || adminProfile?.profile?.phone || ''
       };
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       // Primary and fallback endpoints
       const primaryEndpoint = `${apiUrl}/api/services/${serviceId}/quotation`;

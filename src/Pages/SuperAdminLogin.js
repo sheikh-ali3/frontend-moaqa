@@ -4,7 +4,9 @@ import { Container, Box, Button, TextField, Typography, Paper } from '@mui/mater
 import axios from 'axios';
 import './SuperAdminLogin.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://backend-moaqa-production.up.railway.app'
+  : '';
 
 const SuperAdminLogin = () => {
   const [email, setEmail] = useState('');

@@ -67,7 +67,7 @@ const SuperAdminServicesPage = () => {
     const activeRequests = {};
     
     // Base configuration
-    const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    const baseURL = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
     
     // Get auth token
     const getToken = () => localStorage.getItem('token');
@@ -215,7 +215,7 @@ const SuperAdminServicesPage = () => {
     try {
       console.log("Fetching services...");
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       const response = await axios.get(
         `${apiUrl}/services/superadmin`,
@@ -569,7 +569,7 @@ const SuperAdminServicesPage = () => {
     if (window.confirm('Are you sure you want to delete this quotation?')) {
       try {
         const token = localStorage.getItem('token');
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
         
         // Use the correct backend endpoint for deleting quotations
         await axios.delete(`${apiUrl}/api/quotations/${quotationId}`, {

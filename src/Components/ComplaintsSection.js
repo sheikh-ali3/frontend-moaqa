@@ -17,7 +17,7 @@ const ComplaintsSection = () => {
   const fetchTickets = async () => {
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       const response = await axios.get(`${apiUrl}/api/tickets`, {
         headers: {
@@ -38,7 +38,7 @@ const ComplaintsSection = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       await axios.post(`${apiUrl}/api/tickets/${ticketId}/responses`, {
         message: response
@@ -60,7 +60,7 @@ const ComplaintsSection = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       await axios.put(`${apiUrl}/api/tickets/${ticketId}/responses/${responseId}`, {
         message: response
@@ -81,7 +81,7 @@ const ComplaintsSection = () => {
   const handleDeleteResponse = async (ticketId, responseId) => {
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
       
       await axios.delete(`${apiUrl}/api/tickets/${ticketId}/responses/${responseId}`, {
         headers: {

@@ -4,7 +4,7 @@ import axios from 'axios';
 import './TicketDetailsModal.css';
 import websocketService from '../../../services/websocketService';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
 
 const TicketDetailsModal = ({ isOpen, onClose, ticket, userRole, onResponseAdded }) => {
   const [newResponse, setNewResponse] = useState('');
