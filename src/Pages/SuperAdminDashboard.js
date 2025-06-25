@@ -9,6 +9,7 @@ import SuperAdminSidebar from '../Components/Layout/SuperAdminSidebar';
 import ThemeToggle from '../Components/UI/ThemeToggle';
 import Modal from 'react-modal';
 import websocketService from '../services/websocketService';
+import { updateProduct, deleteProduct } from '../services/api';
 
 // Initialize Modal
 Modal.setAppElement('#root');
@@ -202,7 +203,7 @@ const SuperAdminDashboard = () => {
       return false;
     }
     try {
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       await axios.get(`${apiUrl}/superadmin`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -223,7 +224,7 @@ const SuperAdminDashboard = () => {
         throw new Error('No token found');
       }
       
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.get(`${apiUrl}/superadmin/admins`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -249,7 +250,7 @@ const SuperAdminDashboard = () => {
         throw new Error('No token found');
       }
       
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.get(`${apiUrl}/superadmin/crm/overview`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -274,7 +275,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       console.log('Fetching products from:', `${apiUrl}/superadmin/products`);
       
       try {
@@ -312,16 +313,15 @@ const SuperAdminDashboard = () => {
           console.log('Mapped products:', mappedProducts);
           setProducts(mappedProducts);
         } else {
-          // If no products found, create default products
-          console.log('No products found, creating default products...');
-          await createDefaultProducts();
+          // If no products found, just setProducts([]) and do not call createDefaultProducts or set any default products
+          setProducts([]);
         }
       } catch (error) {
         console.error('Products API error:', error.response || error);
         console.log('Error details:', error.response?.data || error.message);
         // If the API endpoint isn't implemented yet, we'll create default products
         console.log('Creating default products due to API error...');
-        await createDefaultProducts();
+        setProducts([]);
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -341,7 +341,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       console.log('Fetching services from:', `${apiUrl}/services/superadmin`);
       
       const response = await axios.get(
@@ -369,100 +369,6 @@ const SuperAdminDashboard = () => {
       setIsLoading(false);
     }
   }, [navigate, showAlert]);
-
-  // Function to create default products
-  const createDefaultProducts = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
-      console.log('Creating default products at:', `${apiUrl}/superadmin/products`);
-      
-      const defaultProducts = [
-        { productId: 'crm', name: 'CRM System', description: 'Customer Relationship Management', icon: '📊', category: 'crm' },
-        { productId: 'hrm', name: 'HR Management', description: 'Human Resource Management', icon: '👥', category: 'hrm' },
-        { productId: 'job-portal', name: 'Job Portal', description: 'Internal job management system', icon: '🧑‍💼', category: 'job-portal' },
-        { productId: 'job-board', name: 'Job Board', description: 'Public job listing platform', icon: '📋', category: 'job-board' },
-        { productId: 'project-management', name: 'Project Management', description: 'Manage projects and tasks', icon: '📝', category: 'project-management' }
-      ];
-      
-      // Create each default product
-      let successCount = 0;
-      for (const product of defaultProducts) {
-        try {
-          console.log(`Attempting to create product: ${product.name}`);
-      const response = await axios.post(
-            `${apiUrl}/superadmin/products`,
-            product,
-            { 
-              headers: { 
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              } 
-            }
-          );
-          console.log(`Created default product: ${product.name}`, response.data);
-          successCount++;
-        } catch (error) {
-          if (error.response?.status === 400 && error.response?.data?.message?.includes('already exists')) {
-            console.log(`Product ${product.name} already exists`);
-          } else {
-            console.error(`Error creating product ${product.name}:`, error.response?.data || error.message);
-          }
-        }
-      }
-      
-      console.log(`Successfully created ${successCount} products. Fetching updated product list...`);
-      
-      // Fetch products again to get the created ones
-      const response = await axios.get(
-        `${apiUrl}/superadmin/products`,
-        { 
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
-
-      console.log('Products after creation:', response.data);
-      
-      if (response.data && response.data.length > 0) {
-        const mappedProducts = response.data.map(product => ({
-          id: product.productId,
-          name: product.name,
-          description: product.description,
-          icon: product.icon || '📋',
-          category: product.category,
-          _id: product._id,
-          accessLink: product.accessLink,
-          accessUrl: product.accessUrl || `${apiUrl}/products/access/${product.accessLink}`,
-          features: product.features || [],
-          pricing: product.pricing || { isFree: true },
-          active: product.active !== undefined ? product.active : true,
-          displayInMenu: product.displayInMenu !== undefined ? product.displayInMenu : true,
-          totalEnterprises: product.usage?.totalEnterprises || 0,
-          activeEnterprises: product.usage?.activeEnterprises || 0
-        }));
-        console.log('Mapped products after creation:', mappedProducts);
-        setProducts(mappedProducts);
-      } else {
-        console.log('No products returned after creation');
-        // Set default products in state as a fallback
-        setProducts(defaultProducts.map(p => ({
-          ...p,
-          id: p.productId,
-          accessUrl: `${apiUrl}/products/access/default-${p.productId}`,
-          active: true,
-          displayInMenu: true
-        })));
-      }
-    } catch (error) {
-      console.error('Error in createDefaultProducts:', error);
-      showAlert('Failed to create default products. Please check console for details.', 'error');
-    }
-  };
 
   // Add formatRelativeTime helper function
   const formatRelativeTime = (date) => {
@@ -508,7 +414,7 @@ const SuperAdminDashboard = () => {
         return;
       }
       
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       try {
         const response = await axios.get(`${apiUrl}/api/notifications`, {
@@ -624,7 +530,7 @@ const SuperAdminDashboard = () => {
       };
 
       const response = await axios.post(
-        `${'https://backend-moaqa-production.up.railway.app'}/superadmin/create-admin`,
+        `${process.env.REACT_APP_API_URL}/superadmin/create-admin`,
         enterpriseData,
         {
           headers: {
@@ -683,7 +589,7 @@ const SuperAdminDashboard = () => {
       const productName = productNames[productId] || productId;
       
       const actionText = grantAccess ? 'granted' : 'revoked';
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoint = `/superadmin/admins/${adminId}/products/${productId}/${grantAccess ? 'grant' : 'revoke'}`;
       
       const response = await axios.put(
@@ -996,7 +902,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       await axios.delete(`${apiUrl}/superadmin/admins/${adminId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -1087,7 +993,7 @@ const SuperAdminDashboard = () => {
         throw new Error('No authentication token found');
       }
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       try {
         const response = await axios.post(
           `${apiUrl}/api/products`,
@@ -1520,15 +1426,22 @@ const SuperAdminDashboard = () => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      
-      // In a real implementation, this would update the product via API
-      const updatedProducts = products.map(p => 
-        p.id === selectedProduct.id 
-          ? {...p, name: newProduct.name, description: newProduct.description, icon: newProduct.icon} 
+
+      // Only send name, description, and icon in the update payload
+      await updateProduct(selectedProduct.id, {
+        name: newProduct.name,
+        description: newProduct.description,
+        icon: newProduct.icon
+      });
+
+      // Update local state after successful API update
+      const updatedProducts = products.map(p =>
+        p.id === selectedProduct.id
+          ? { ...p, name: newProduct.name, description: newProduct.description, icon: newProduct.icon }
           : p
       );
-      
       setProducts(updatedProducts);
+
       showAlert(`Product "${newProduct.name}" updated successfully`, 'success');
       setOpenProductEditDialog(false);
       resetProductForm();
@@ -1618,7 +1531,7 @@ const SuperAdminDashboard = () => {
           throw new Error('No authentication token found');
         }
         
-        const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
         await axios.delete(`${apiUrl}/superadmin/services/${serviceId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -1642,7 +1555,7 @@ const SuperAdminDashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       await axios.put(`${apiUrl}/api/notifications/${notificationId}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -1678,7 +1591,7 @@ const SuperAdminDashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       await axios.put(`${apiUrl}/api/notifications/read-all`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -1731,7 +1644,7 @@ const SuperAdminDashboard = () => {
       
       console.log('Updating enterprise with data:', updateData);
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       const response = await axios.put(
         `${apiUrl}/api/enterprise/update/${enterpriseId}`,
@@ -1789,7 +1702,7 @@ const SuperAdminDashboard = () => {
         return;
       }
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       // Use the same route as SuperAdminServicesPage.js
       const response = await axios.get(`${apiUrl}/services/superadmin/quotations`, {
         headers: { 
@@ -1845,7 +1758,7 @@ const SuperAdminDashboard = () => {
         navigate('/superadmin/login');
         return;
       }
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       await axios.delete(`${apiUrl}/api/quotations/${quotationId}`, {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -1873,7 +1786,7 @@ const SuperAdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.get(`${apiUrl}/api/invoices`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -1963,7 +1876,7 @@ const SuperAdminDashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       await axios.delete(`${apiUrl}/api/invoices/${invoiceId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -2106,7 +2019,7 @@ const SuperAdminDashboard = () => {
         return;
       }
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       // Validate required fields
       if (!invoiceForm.adminId) {
@@ -2244,7 +2157,7 @@ const SuperAdminDashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
       // Fetch all services (superadmin can see all services)
       const servicesResponse = await axios.get(`${apiUrl}/api/services/superadmin`, {
@@ -2521,7 +2434,7 @@ const SuperAdminDashboard = () => {
       console.log('Sending update data:', updateData);
       console.log('Quotation ID:', selectedQuotation._id);
       
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://backend-moaqa-production.up.railway.app';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.put(
         `${apiUrl}/api/services/superadmin/quotations/${selectedQuotation._id}`,
         updateData,
@@ -2632,6 +2545,27 @@ const SuperAdminDashboard = () => {
     setPermissions({ crmAccess: false });
     setProductAccess([]);
     setSelectedAdmin(null);
+  };
+
+  // Add after handleDeleteService
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+      try {
+        setIsLoading(true);
+        await deleteProduct(productId);
+        setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
+        showAlert('Product deleted successfully', 'success');
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        let errorMessage = error.response?.data?.message || 'Failed to delete product';
+        if (error.response?.data?.adminCount) {
+          errorMessage += ` (In use by ${error.response.data.adminCount} admin(s))`;
+        }
+        showAlert(errorMessage, 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -2892,6 +2826,12 @@ const SuperAdminDashboard = () => {
                             onClick={() => handleViewEnterprises(product)}
                           >
                             <i className="users-icon"></i> View Enterprises
+                          </button>
+                          <button
+                            className="delete-btn"
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            <i className="delete-icon"></i> Delete
                           </button>
                         </div>
                       </div>
